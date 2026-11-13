@@ -1,0 +1,30 @@
+#include "AudioTools.h"
+#include "AudioTools/AudioLibs/AudioBoardStream.h"
+
+AudioInfo info(16000, 1, 16);
+
+AudioBoardStream audio(ESP32S3HosyondDisplay);
+
+StreamCopy copier(audio, audio);
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  auto config = audio.defaultConfig(RXTX_MODE);
+  config.copyFrom(info);
+
+  if (!audio.begin(config)) {
+    Serial.println("Erro ao iniciar audio!");
+    while (true) delay(1000);
+  }
+
+  audio.setVolume(0.7);
+
+  pinMode(45, OUTPUT);
+  digitalWrite(45, LOW);
+}
+
+void loop() {
+  copier.copy();
+}
